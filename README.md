@@ -88,7 +88,7 @@ Usage: Valid command-line arguments are:
 
 ---
 
-[^1]: [20 to 250 kPa, Absolute, Integrated Pressure Sensor Datasheet](https://www.nxp.com/docs/en/data-sheet/MPX4100A.pdf).
+[^1]: [NXP MPX4100A, 20 to 250 kPa, Absolute, Integrated Pressure Sensor Datasheet](https://www.nxp.com/docs/en/data-sheet/MPX4100A.pdf).
 
 [^2]: [GNU Scientific Library](https://www.gnu.org/software/gsl/)
 
