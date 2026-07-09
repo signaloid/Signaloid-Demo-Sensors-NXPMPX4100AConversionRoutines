@@ -5,5 +5,16 @@ MinimumCore:
 
 TraceVariables:
     - File: "main.c"
-      LineNumber: 90
-      Expression: "outputDistributions[0]"
+
+      LineNumber: 66
+
+      Expression: "outputVariables[0:0]"
+
+BenchmarkingVariables:
+    - VariableName: outputVariables[0]
+      VariableDescription: Calibrated Pressure Output (kPa)
+      OutputObject: Distribution
+      CommandLineArguments: -S 0
+
+BenchmarkingAllOutputs:
+    - CommandLineArguments: -S 1

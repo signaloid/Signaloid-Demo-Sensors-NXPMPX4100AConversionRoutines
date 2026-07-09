@@ -28,17 +28,21 @@ These source files are symlinks to the original files and are contained in the r
 [Signaloid-Demo-UxHwCompatibilityForNativeExecution](https://github.com/signaloid/Signaloid-Demo-UxHwCompatibilityForNativeExecution)
 which is included as a submodule in `submodules/compat`.
 
+## utilities-config.h
+Configuration constants and demo-specific definitions.
+
 ## config.mk
 Signaloid cores use this file to identify the source codes they will use when
 building the C/C++ demo application.
+
 # To Build Natively on Non-Signaloid Platforms
 
 ## On MacOS (with MacPorts)
 ```
-gcc -O3 -I. -I/opt/local/include main.c utilities.c common.c uxhw.c -L/opt/local/lib -lgsl -lgslcblas
+gcc -O3 -I. -I/opt/local/include main.c kernel.c utilities.c common.c uxhw.c -L/opt/local/lib -lgsl -lgslcblas
 ```
 
 ## On Linux
 ```
-gcc -O3 -I. -I/opt/local/include main.c utilities.c common.c uxhw.c -L/opt/local/lib -lgsl -lgslcblas -lm
+gcc -O3 -I. -I/opt/local/include main.c kernel.c utilities.c common.c uxhw.c -L/opt/local/lib -lgsl -lgslcblas -lm
 ```
