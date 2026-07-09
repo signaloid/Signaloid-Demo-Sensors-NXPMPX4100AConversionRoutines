@@ -20,36 +20,21 @@
  *	SOFTWARE.
  */
 
-/*
- *	These values of the MPX4100's Constant1 and Constant2
- *	are taken from the Transfer Function on page 6 of MPX4100A.pdf, 2024-07-03
- */
-#define kSensorCalibrationConstant1				(0.1518)
-#define kSensorCalibrationConstant2				(0.01059)
+#include "kernel.h"
 
-#define kDefaultInputDistributionVsensorUniformDistLow		(2.3)
-#define kDefaultInputDistributionVsensorUniformDistHigh		(2.7)
-#define kDefaultInputDistributionVsupplyUniformDistLow		(4.8)
-#define kDefaultInputDistributionVsupplyUniformDistHigh		(5.4)
 
-/*
- *	Input Distributions:
- *		kInputDistributionIndexVsensorADC	: Ratiometric Analog Voltage (in Volt)
- *		kInputDistributionIndexVsupplyADC	: Supply Voltage (in Volt)
- */
-typedef enum
+double
+NXPMPX4100A_calculateOutput(double * inputVariables, double *  outputVariables)
 {
-	kInputDistributionIndexVsensorADC			= 0,
-	kInputDistributionIndexVsupplyADC			= 1,
-	kInputDistributionIndexMax,
-} InputDistributionIndex;
+	double  vSupplyADC;
+	double  vSensorADC;
+	double  calibratedValue;
 
-/*
- *	Output Distribution:
- *		kOutputDistributionIndexCalibratedSensorOutput	: Calibrated Pressure Output (in kPa)
- */
-typedef enum
-{
-	kOutputDistributionIndexCalibratedSensorOutput		= 0,
-	kOutputDistributionIndexMax,
-} OutputDistributionIndex;
+	vSupplyADC  = inputVariables[kNXPMPX4100AInputVariableIndexVsupplyADC];
+	vSensorADC  = inputVariables[kNXPMPX4100AInputVariableIndexVsensorADC];
+
+	calibratedValue = ((vSensorADC / vSupplyADC) + kNXPMPX4100ASensorCalibrationConstant1) / kNXPMPX4100ASensorCalibrationConstant2;
+	outputVariables[kNXPMPX4100AOutputVariableIndexCalibratedSensorOutput] = calibratedValue;
+
+	return calibratedValue;
+}
