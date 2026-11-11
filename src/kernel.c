@@ -1,5 +1,5 @@
 /*
- *	Copyright (c) 2026, Signaloid.
+ *	Copyright (c) 2024-2026, Signaloid.
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,9 @@
  *	SOFTWARE.
  */
 
+#include <uxhw.h>
 #include "kernel.h"
+#include "nxp-mpx4100a-monte-carlo.h"
 
 
 double
@@ -37,4 +39,49 @@ NXPMPX4100A_calculateOutput(double * inputVariables, double *  outputVariables)
 	outputVariables[kNXPMPX4100AOutputVariableIndexCalibratedSensorOutput] = calibratedValue;
 
 	return calibratedValue;
+}
+
+void
+NXPMPX4100ASetInputVariablesViaUxHwCall(double * inputVariables)
+{
+	inputVariables[kNXPMPX4100AInputVariableIndexVsensorADC] = UxHwDoubleUniformDist(
+		kNXPMPX4100ADefaultInputVariableVsensorUniformDistLow,
+		kNXPMPX4100ADefaultInputVariableVsensorUniformDistHigh
+	);
+
+	inputVariables[kNXPMPX4100AInputVariableIndexVsupplyADC] = UxHwDoubleUniformDist(
+		kNXPMPX4100ADefaultInputVariableVsupplyUniformDistLow,
+		kNXPMPX4100ADefaultInputVariableVsupplyUniformDistHigh
+	);
+
+	return;
+}
+
+double
+NXPMPX4100ACalculateOutputUxHw(double * outputVariables, double * monteCarloOutputSamples)
+{
+	double  inputVariables[kNXPMPX4100AInputVariableIndexMax];
+	double  calibratedSensorOutput;
+
+	NXPMPX4100ASetInputVariablesViaUxHwCall(inputVariables);
+	calibratedSensorOutput      = NXPMPX4100A_calculateOutput(inputVariables, outputVariables);
+	monteCarloOutputSamples[0]  = calibratedSensorOutput;
+
+	return calibratedSensorOutput;
+}
+
+double
+NXPMPX4100ACalculateOutputMonteCarlo(
+	size_t      numberOfMonteCarloIterations,
+	double *    outputVariables,
+	double *    monteCarloOutputSamples)
+{
+	double inputVariables[kNXPMPX4100AInputVariableIndexMax];
+
+	return NXPMPX4100A_calculateOutputMonteCarloSamples(
+		numberOfMonteCarloIterations,
+		inputVariables,
+		outputVariables,
+		monteCarloOutputSamples
+	);
 }
