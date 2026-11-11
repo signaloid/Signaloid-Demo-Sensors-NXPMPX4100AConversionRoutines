@@ -1,5 +1,5 @@
 /*
- *	Copyright (c) 2026, Signaloid.
+ *	Copyright (c) 2024-2026, Signaloid.
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,20 @@
 
 #pragma once
 
+#include <stddef.h>
+
 
 /*
  *	These values of the MPX4100's Constant1 and Constant2
  *	are taken from the Transfer Function on page 6 of MPX4100A.pdf, 2024-07-03
  */
-#define kNXPMPX4100ASensorCalibrationConstant1 (0.1518)
-#define kNXPMPX4100ASensorCalibrationConstant2 (0.01059)
+#define kNXPMPX4100ASensorCalibrationConstant1  (0.1518)
+#define kNXPMPX4100ASensorCalibrationConstant2  (0.01059)
 
-#define kNXPMPX4100ADefaultInputVariableVsensorUniformDistLow  (2.3)
-#define kNXPMPX4100ADefaultInputVariableVsensorUniformDistHigh (2.7)
-#define kNXPMPX4100ADefaultInputVariableVsupplyUniformDistLow  (4.8)
-#define kNXPMPX4100ADefaultInputVariableVsupplyUniformDistHigh (5.4)
+#define kNXPMPX4100ADefaultInputVariableVsensorUniformDistLow   (2.3)
+#define kNXPMPX4100ADefaultInputVariableVsensorUniformDistHigh  (2.7)
+#define kNXPMPX4100ADefaultInputVariableVsupplyUniformDistLow   (4.8)
+#define kNXPMPX4100ADefaultInputVariableVsupplyUniformDistHigh  (5.4)
 
 /*
  *	Input Variables:
@@ -42,8 +44,8 @@
  */
 typedef enum
 {
-	kNXPMPX4100AInputVariableIndexVsensorADC   = 0,
-	kNXPMPX4100AInputVariableIndexVsupplyADC   = 1,
+	kNXPMPX4100AInputVariableIndexVsensorADC    = 0,
+	kNXPMPX4100AInputVariableIndexVsupplyADC    = 1,
 	kNXPMPX4100AInputVariableIndexMax,
 } NXPMPX4100AInputVariableIndex;
 
@@ -68,3 +70,39 @@ typedef enum
  */
 double
 NXPMPX4100A_calculateOutput(double * inputVariables, double *  outputVariables);
+
+/**
+ *	@brief	Sets the input variables via calls to the UxHw uniform distribution function.
+ *		In UxHw mode this gives distributions. In native Monte Carlo mode each call gives one sample.
+ *
+ *	@param	inputVariables	: An array of double values, where the function writes the distributional data.
+ */
+void
+NXPMPX4100ASetInputVariablesViaUxHwCall(double * inputVariables);
+
+/**
+ *	@brief	UxHw-mode calculation kernel. Evaluates the sensor calibration once
+ *		using distributional arithmetic.
+ *
+ *	@param	outputVariables		: Array of size `kNXPMPX4100AOutputVariableIndexMax` to fill.
+ *	@param	monteCarloOutputSamples	: Single-element array for the distributional result.
+ *	@return	double			: Returns the distributional calibrated output.
+ */
+double
+NXPMPX4100ACalculateOutputUxHw(double * outputVariables, double * monteCarloOutputSamples);
+
+/**
+ *	@brief	Monte Carlo calculation kernel. Runs
+ *		`numberOfMonteCarloIterations` iterations of the
+ *		sensor calibration into `monteCarloOutputSamples`.
+ *
+ *	@param	numberOfMonteCarloIterations	: Number of Monte Carlo iterations to run.
+ *	@param	outputVariables		: Array of size `kNXPMPX4100AOutputVariableIndexMax` to fill.
+ *	@param	monteCarloOutputSamples	: Array of `numberOfMonteCarloIterations` doubles, filled with samples.
+ *	@return	double			: Returns the last calibrated output sample.
+ */
+double
+NXPMPX4100ACalculateOutputMonteCarlo(
+	size_t      numberOfMonteCarloIterations,
+	double *    outputVariables,
+	double *    monteCarloOutputSamples);

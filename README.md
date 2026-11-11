@@ -2,10 +2,10 @@
 [<img src="https://assets.signaloid.io/add-to-signaloid-cloud-logo-light-latest.png#gh-light-mode-only" alt="[Add to signaloid.io]" height="30">](https://signaloid.io/repositories?connect=https://github.com/signaloid/Signaloid-Demo-Sensors-NXPMPX4100AConversionRoutines#gh-light-mode-only)
 
 # NXP MPX4100A Sensor Calibration Use Case
-Example demonstrating output uncertainty estimation for calibrated ADC values from the MPX4100A sensor[^1].
+Example demonstrating distribution arithmetic on the output for calibrated ADC values from the MPX4100A sensor[^1].
 
 ## Introduction
-The MPX4100A is a 20 to 250 kPa range integrated pressure sensor.
+The MPX4100A is a 20 to 250 `kPa` range integrated pressure sensor.
 
 ## Getting started
 
@@ -46,12 +46,11 @@ sudo apt-get install libgsl-dev libgslcblas0
 ```
 1. Compile natively (e.g., on Linux):
 ```
-cd src/
-gcc -I. -I/opt/local/include main.c utilities.c common.c uxhw.c -L/opt/local/lib -o native-exe -lgsl -lgslcblas -lm
+make local-build
 ```
 2. Run the application in the MonteCarlo mode, using (`-M`) command-line option:
 ```
-./native-exe -M 10000
+./demo-native-mc -M 10000 -S 0
 ```
 The above program runs 10000 Monte Carlo iterations.
 
@@ -61,13 +60,13 @@ cat data.out
 ```
 
 ## Inputs
-The inputs to the NXPMPX4100A sensor conversion algorithms are the raw ADC taken from the voltage output of the sensor ($V_{out}$)
-as well as the supply voltage of the sensor ($V_{s}$). The algorithm models the ADC quantization error as well as the uncertainty
+The inputs to the NXPMPX4100A sensor conversion algorithms are the raw ADC taken from the voltage output of the sensor (`Vout`)
+as well as the supply voltage of the sensor (`Vs`). The algorithm models the ADC quantization error as well as the variation
 in the supply voltage using uniform distributions.
 
-The uncertainty in $V_{out}$ is modeled as a (`UniformDist(2.3, 2.7)`) Volts.
+The input `Vout` is modeled as a (`UniformDist(2.3, 2.7)`) Volts.
 
-The uncertainty in $V_{s}$ is modeled as a (`UniformDist(4.8, 5.4)`) Volts.
+The input `Vs` is modeled as a (`UniformDist(4.8, 5.4)`) Volts.
 
 ## Outputs
 The output of the application is the calibrated pressure, calculated by:
@@ -87,7 +86,6 @@ Usage: Valid command-line arguments are:
         [-S, --select-output <output : int>] (Compute 0-indexed output, by default 0.)
         [-M, --multiple-executions <Number of executions : int (Default: 1)>] (Repeated execute kernel for benchmarking.)
         [-T, --time] (Timing mode: Times and prints the timing of the kernel execution.)
-        [-b, --benchmarking] (Benchmarking mode: Generate outputs in format for benchmarking.)
         [-j, --json] (Print output in JSON format.)
         [-h, --help] (Display this help message.)
 ```
@@ -96,7 +94,7 @@ Usage: Valid command-line arguments are:
 
 ---
 
-[^1]: [20 to 250 kPa, Absolute, Integrated Pressure Sensor Datasheet](https://www.nxp.com/docs/en/data-sheet/MPX4100A.pdf).
+[^1]: [20 to 250 `kPa`, Absolute, Integrated Pressure Sensor Datasheet](https://www.nxp.com/docs/en/data-sheet/MPX4100A.pdf).
 
 [^2]: [GNU Scientific Library](https://www.gnu.org/software/gsl/)
 
